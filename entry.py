@@ -1,2 +1,5 @@
+from manager import AssignmentManager
+
 if __name__ == '__main__':
-    pass
+    manager = AssignmentManager()
+    manager.manage()
