@@ -15,6 +15,10 @@ class AssignmentManager:
         self.sentence_col_name = 'sentence'
         self.sentence_col_id = 'sentence_id'
         self.word_col_name = 'word'
+        self.vector_csv = 'vectors.csv'
+        self.phrases_csv = 'phrases.csv'
+        self.docker_spark_home_dir = '/home/jovyan/work/'
+        self.google_word_vector_bin = 'GoogleNews-vectors-negative300.bin'
         self.ss = SparkSession.builder.appName('assignment').getOrCreate()
         self.flat_file_service = FlatFileCreationService()
         self.dist_service = DistanceCalculationService()
@@ -24,8 +28,8 @@ class AssignmentManager:
     def manage(self, sentence: str):
         self.make_flat_file()
 
-        source_df = self.read_service.read_spark_csv_with_row_id('/home/jovyan/work/phrases.csv', '//')
-        vector_df = self.read_service.read_word_vector('/home/jovyan/work/vectors.csv', ' ')
+        source_df = self.read_service.read_spark_csv_with_row_id(self.docker_spark_home_dir + self.phrases_csv, '//')
+        vector_df = self.read_service.read_word_vector(self.docker_spark_home_dir + self.vector_csv, ' ')
 
         if sentence is None:
             self.get_general_distances(source_df, vector_df)
@@ -34,9 +38,9 @@ class AssignmentManager:
 
     def make_flat_file(self):
         # TODO: should use try catch if path does not exist
-        if not os.path.isfile('/home/jovyan/work/vectors.csv'):
+        if not os.path.isfile(self.docker_spark_home_dir + self.vector_csv):
             self.flat_file_service.make_flat_file(
-                'file:///home/jovyan/work/GoogleNews-vectors-negative300.bin')
+                f'file://{self.docker_spark_home_dir}{self.google_word_vector_bin}', self.vector_csv)
 
     def get_general_distances(self, source_df, vector_df):
         return self.calculate_word_distances(source_df, vector_df)
