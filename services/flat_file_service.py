@@ -1,4 +1,3 @@
-import gensim
 from gensim.models import KeyedVectors
 
 
