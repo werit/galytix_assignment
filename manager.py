@@ -50,6 +50,7 @@ class AssignmentManager:
             source_df.agg(max(self.sentence_col_id).alias('max_id')).select('max_id').collect()[0]['max_id'])
 
         source_df = self.add_sentence_to_df(current_max_row, sentence, source_df)
+        source_df.persist()
 
         dist = self.calculate_word_distances(source_df, vector_df)
 
@@ -59,7 +60,9 @@ class AssignmentManager:
                                                                            'df2.sentence_id')).show()
 
     def calculate_word_distances(self, source_df, vector_df):
+        vector_df.persist()
         df = self.word_embedding_service.embed_words(source_df, vector_df)
+        df.persist()
         return self.dist_service.calculate_distance(df)
 
     def add_sentence_to_df(self, max_row, sentence, source_df):

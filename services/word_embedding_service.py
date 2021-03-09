@@ -62,6 +62,8 @@ class WordEmbeddingService:
         words_with_vector_df = self.assign_vector_to_words(
             clean_word_no_dup_df, word_vector_df)
 
+        words_with_vector_df.persist()
+
         mismatched_words_matched_df = self.embed_vector_to_not_matched_words(
             words_with_vector_df, word_vector_df)
 
