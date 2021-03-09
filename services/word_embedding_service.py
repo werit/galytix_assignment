@@ -15,10 +15,6 @@ class WordEmbeddingService:
         self.sentence_col_id = 'sentence_id'
         self.word_col_name = 'word'
 
-    def read_csv_without_delimitation(self, path_to_csv):
-        return self.spark_session.read.format('csv').option("delimiter", "//").option(
-            "header", "false").load(path_to_csv)
-
     def tokenize(self, df: DataFrame, col_to_tokenize: str):
         regex_tokenizer = RegexTokenizer(
             inputCol=col_to_tokenize, outputCol='word', pattern='\\W')
